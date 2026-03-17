@@ -1,0 +1,28 @@
+# mdBook build output
+output/
+
+# Downloaded source tarballs and patches
+sources/
+patches/downloads/
+
+# Editor artifacts
+.vscode/
+.idea/
+*.swp
+*~
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Python (spell-check tooling)
+__pycache__/
+*.pyc
+.venv/
+
+# Node (markdown-link-check)
+node_modules/
+
+# Temporary build files
+*.tmp
+*.bak

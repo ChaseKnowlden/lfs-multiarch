@@ -1,0 +1,30 @@
+/* Multi-Arch LFS Book — custom theme overrides */
+
+/* Arch Note callout boxes */
+blockquote p strong:first-child {
+    color: #c0392b;
+}
+
+/* Make arch-note blockquotes visually distinct */
+blockquote {
+    border-left: 4px solid #e67e22;
+    background: rgba(230, 126, 34, 0.07);
+    padding: 0.5em 1em;
+    margin: 1em 0;
+}
+
+/* "Work in progress" callouts */
+blockquote p em:only-child {
+    color: #7f8c8d;
+}
+
+/* Code blocks — slightly wider */
+pre {
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+/* Tier badge colours in tables */
+td:last-child {
+    white-space: nowrap;
+}

@@ -1,0 +1,12 @@
+# words that codespell flags but are correct in this context
+LFS
+ld
+hppa
+parisc
+yaboot
+ELFv2
+ELFv1
+endian
+loongarch
+loong
+riscv

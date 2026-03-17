@@ -1,0 +1,28 @@
+[book]
+title       = "Multi-Architecture Linux From Scratch"
+description = "Build a complete Linux system from source for 14 CPU architectures."
+authors     = ["LFS Multi-Arch Contributors"]
+language    = "en"
+src         = "book"
+
+[build]
+build-dir   = "output"
+create-missing = false   # require all SUMMARY.md links to exist as real files
+
+[output.html]
+site-url              = "/"
+git-repository-url    = "https://github.com/ChaseKnowlden/lfs-multiarch"
+git-repository-icon   = "fa-github"
+edit-url-template     = "https://github.com/ChaseKnowlden/lfs-multiarch/edit/main/book/{path}"
+additional-css        = ["theme/custom.css"]
+no-section-label      = false
+fold.enable           = true
+fold.level            = 1
+
+[output.html.search]
+enable        = true
+limit-results = 30
+teaser-word-count = 30
+
+[preprocessor.index]
+[preprocessor.links]

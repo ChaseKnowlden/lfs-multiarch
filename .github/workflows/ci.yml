@@ -1,0 +1,115 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly full check (Sundays 02:00 UTC)
+    - cron: "0 2 * * 0"
+
+env:
+  MDBOOK_VERSION: "0.4.40"
+
+jobs:
+  # -------------------------------------------------------------------------
+  # Build HTML
+  # -------------------------------------------------------------------------
+  build:
+    name: Build book
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mdBook
+        run: |
+          curl -sSL \
+            "https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz -C /usr/local/bin mdbook
+
+      - name: Build
+        run: mdbook build
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: book-html
+          path: output/
+          retention-days: 7
+
+  # -------------------------------------------------------------------------
+  # Spell check
+  # -------------------------------------------------------------------------
+  spell:
+    name: Spell check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install codespell
+        run: pip install codespell
+
+      - name: Run codespell
+        run: |
+          codespell \
+            --skip="output,*.png,*.jpg,*.svg,.git,node_modules" \
+            --ignore-words=.codespell-ignore \
+            book scripts ROADMAP.md CONTRIBUTING.md
+
+  # -------------------------------------------------------------------------
+  # Link check (only on push to main to avoid rate limits on PRs)
+  # -------------------------------------------------------------------------
+  linkcheck:
+    name: Link check
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install markdown-link-check
+        run: npm install -g markdown-link-check
+
+      - name: Check links
+        run: |
+          find book -name '*.md' | \
+            xargs markdown-link-check --config .mlc.json --quiet
+
+  # -------------------------------------------------------------------------
+  # Deploy to GitHub Pages (main branch only)
+  # -------------------------------------------------------------------------
+  deploy:
+    name: Deploy
+    needs: [build, spell]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install mdBook
+        run: |
+          curl -sSL \
+            "https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-x86_64-unknown-linux-gnu.tar.gz" \
+            | tar -xz -C /usr/local/bin mdbook
+
+      - name: Build
+        run: mdbook build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: output/
+
+      - id: deployment
+        name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

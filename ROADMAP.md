@@ -8,11 +8,11 @@ A community-driven Linux From Scratch book targeting 14 architectures:
 ## Milestone 0 — Project Bootstrap *(current)*
 
 - [x] Define target architecture list
-- [ ] Establish book structure and tooling
-- [ ] Set up XML/DocBook or Markdown source format decision
-- [ ] Write contributor guidelines (`CONTRIBUTING.md`)
-- [ ] Set up CI skeleton (build-test, spell-check, link-check)
-- [ ] Write this ROADMAP
+- [x] Establish book structure and tooling
+- [x] Set up XML/DocBook or Markdown source format decision (Markdown + mdBook)
+- [x] Write contributor guidelines (`CONTRIBUTING.md`)
+- [x] Set up CI skeleton (build-test, spell-check, link-check)
+- [x] Write this ROADMAP
 
 ---
 
@@ -168,3 +168,4 @@ For each architecture write or verify arch-specific sections:
 | Date       | Event                              |
 |------------|------------------------------------|
 | 2026-03-17 | Project started, ROADMAP drafted   |
+| 2026-03-17 | Milestone 0 complete — book structure, tooling, CI, all stubs |
