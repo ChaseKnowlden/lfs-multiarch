@@ -16,7 +16,6 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Binutils          | 2.43.1   | 28.6 MB       |                                 |
 | Bison             | 3.8.2    | 2.7 MB        |                                 |
 | Bzip2             | 1.0.8    | 792 KB        |                                 |
-| Check             | 0.15.2   | 760 KB        |                                 |
 | Coreutils         | 9.5      | 5.6 MB        |                                 |
 | DejaGNU           | 1.6.3    | 608 KB        |                                 |
 | Diffutils         | 3.10     | 1.5 MB        |                                 |
