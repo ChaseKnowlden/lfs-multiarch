@@ -51,6 +51,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Libpipeline       | 1.5.7    | 956 KB        |                                 |
 | Libtool           | 2.4.7    | 996 KB        |                                 |
 | Linux kernel      | 6.10.5   | 136 MB        |                                 |
+| LZ4               | 1.9.4    | 1.4 MB        |                                 |
 | M4                | 1.4.19   | 1.6 MB        |                                 |
 | Make              | 4.4.1    | 2.3 MB        |                                 |
 | Man-DB            | 2.12.1   | 1.9 MB        |                                 |
@@ -62,7 +63,9 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Ncurses           | 6.5      | 3.6 MB        |                                 |
 | Ninja             | 1.12.1   | 228 KB        |                                 |
 | OpenSSL           | 3.3.1    | 17.8 MB       |                                 |
+| packaging         | 24.1     | 148 KB        | Python                          |
 | Patch             | 2.7.6    | 766 KB        |                                 |
+| PCRE2             | 10.44    | 1.9 MB        |                                 |
 | Perl              | 5.40.0   | 13.2 MB       |                                 |
 | Pkg-config        | 0.29.2   | 2.0 MB        |                                 |
 | Procps-ng         | 4.0.4    | 1.4 MB        |                                 |
@@ -72,6 +75,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Sed               | 4.9      | 1.3 MB        |                                 |
 | Setuptools        | 73.0.1   | 2.2 MB        |                                 |
 | Shadow            | 4.16.0   | 1.8 MB        |                                 |
+| SQLite            | 3.46.1   | 3.2 MB        |                                 |
 | Sysklogd          | 2.6.1    | 489 KB        |                                 |
 | Sysvinit          | 3.10     | 236 KB        |                                 |
 | Tar               | 1.35     | 2.6 MB        |                                 |
