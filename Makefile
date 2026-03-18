@@ -25,7 +25,7 @@ BOOK_SRC    := book
 OUTPUT_DIR  := output
 PANDOC_OUT  := output/pdf
 
-.PHONY: all build serve check spell linkcheck pdf epub clean install-deps arch-check
+.PHONY: all build serve check spell linkcheck pdf epub clean install-deps arch-check currency currency-update
 
 all: build
 
@@ -91,6 +91,14 @@ epub: build
 arch-check:
 	@echo "Checking host for LFS_ARCH=$(ARCH)"
 	source scripts/arch-config.sh $(ARCH) && scripts/version-check.sh
+
+currency:
+	@echo "==> Checking upstream package versions"
+	$(PYTHON) scripts/check-versions.py
+
+currency-update:
+	@echo "==> Checking upstream package versions and updating ch03-packages.md"
+	$(PYTHON) scripts/check-versions.py --update
 
 # ---------------------------------------------------------------------------
 # Housekeeping

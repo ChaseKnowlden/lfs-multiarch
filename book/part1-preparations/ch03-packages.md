@@ -50,6 +50,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Libffi            | 3.4.6    | 1.3 MB        |                                 |
 | Libpipeline       | 1.5.7    | 956 KB        |                                 |
 | Libtool           | 2.4.7    | 996 KB        |                                 |
+| Libxcrypt         | 4.4.36   | 540 KB        |                                 |
 | Linux kernel      | 6.10.5   | 136 MB        |                                 |
 | LZ4               | 1.9.4    | 1.4 MB        |                                 |
 | M4                | 1.4.19   | 1.6 MB        |                                 |
@@ -67,7 +68,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Patch             | 2.7.6    | 766 KB        |                                 |
 | PCRE2             | 10.44    | 1.9 MB        |                                 |
 | Perl              | 5.40.0   | 13.2 MB       |                                 |
-| Pkg-config        | 0.29.2   | 2.0 MB        |                                 |
+| Pkgconf           | 2.3.0    | 492 KB        |                                 |
 | Procps-ng         | 4.0.4    | 1.4 MB        |                                 |
 | Psmisc            | 23.7     | 356 KB        |                                 |
 | Python            | 3.12.5   | 20.0 MB       |                                 |

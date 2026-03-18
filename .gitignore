@@ -23,6 +23,9 @@ __pycache__/
 # Node (markdown-link-check)
 node_modules/
 
+# Secrets
+.env
+
 # Temporary build files
 *.tmp
 *.bak

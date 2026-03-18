@@ -73,7 +73,7 @@ substitution variables where arch-specific values differ.
 - [ ] **Part IV — Building the LFS System**
   - [ ] Glibc, Zlib, Bzip2, Xz, Zstd, File, Readline, M4, Bc, Flex,
           Tcl, Expect, DejaGNU, Binutils, GMP, MPFR, MPC, Attr, Acl,
-          Libcap, Shadow, GCC, Pkg-config, Ncurses, Sed, Psmisc, Gettext,
+          Libcap, Shadow, GCC, Pkgconf, Ncurses, Sed, Psmisc, Gettext,
           Bison, Grep, Bash, Libtool, GDBM, Gperf, Expat, Inetutils,
           Less, Perl, XML::Parser, Intltool, Autoconf, Automake, OpenSSL,
           Kmod, Elfutils, Libffi, Python, Flit-core, Wheel, Setuptools,
