@@ -568,7 +568,7 @@ def parse_book_versions():
     versions = {}
     for line in PACKAGES_FILE.read_text().splitlines():
         m = _ROW_RE.match(line)
-        if m and not m.group("ver").startswith("-") and m.group("ver") != "Version":
+        if m and m.group("ver")[0].isdigit():
             versions[m.group("pkg")] = m.group("ver")
     return versions
 
