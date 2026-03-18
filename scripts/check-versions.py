@@ -39,7 +39,7 @@ MAX_WORKERS = 8
 UA = "lfs-multiarch-version-check/1.0 (+https://github.com/ChaseKnowlden/lfs-multiarch)"
 
 # Packages checked at most once per week to avoid constant churn.
-WEEKLY_PACKAGES = {"Iana-Etc", "Vim"}
+WEEKLY_PACKAGES = {"Iana-Etc", "Linux kernel", "Vim"}
 WEEK_SECONDS = 7 * 24 * 3600
 
 
