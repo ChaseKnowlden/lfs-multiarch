@@ -267,21 +267,38 @@ def check_openssl():
     return None
 
 
+def _perl_is_stable(ver):
+    """Perl uses odd minor versions for development releases (5.43.x = dev)."""
+    m = re.match(r"\d+\.(\d+)", str(ver))
+    return m and int(m.group(1)) % 2 == 0
+
+
 def check_perl():
     data = fetch_json(
         "https://fastapi.metacpan.org/v1/release/latest_by_distribution/perl"
     )
     if data:
         ver = data.get("version", "")
-        if ver and not is_prerelease(ver):
+        if ver and _perl_is_stable(ver):
             return ver
-    return check_github_tag("Perl", "perl5", r"v(\d+\.\d+\.\d+)")
+    # Fallback: scan tags and return the highest stable one.
+    tag_data = fetch_json(
+        "https://api.github.com/repos/Perl/perl5/tags?per_page=100"
+    )
+    if tag_data:
+        versions = [
+            m.group(1)
+            for tag in tag_data
+            for m in [re.search(r"v(\d+\.\d+\.\d+)", tag.get("name", ""))]
+            if m and _perl_is_stable(m.group(1))
+        ]
+        if versions:
+            return max(versions, key=version_tuple)
+    return None
 
 
 def check_xml_parser():
-    data = fetch_json(
-        "https://fastapi.metacpan.org/v1/release/latest_by_distribution/XML-Parser"
-    )
+    data = fetch_json("https://fastapi.metacpan.org/v1/module/XML::Parser")
     if data:
         return data.get("version")
     return None
@@ -315,10 +332,10 @@ def check_sqlite():
     m = re.search(r"sqlite-autoconf-(\d{7})\.tar", html)
     if not m:
         return None
-    raw = m.group(1)          # e.g. 3470100 → 3.47.1
-    major = raw[0]
-    minor = str(int(raw[1:4]))
-    patch = str(int(raw[4:6]))
+    raw = m.group(1)          # M NN PP XX  e.g. 3470100 → 3.47.1
+    major = int(raw[0])
+    minor = int(raw[1:3])     # 2 digits, strip leading zero
+    patch = int(raw[3:5])     # 2 digits, strip leading zero
     return f"{major}.{minor}.{patch}"
 
 
@@ -337,6 +354,20 @@ def check_tcl():
     return None
 
 
+def check_savannah(project):
+    html = fetch(f"https://download.savannah.gnu.org/releases/{project}/")
+    if not html:
+        return None
+    versions = [
+        m.group(1)
+        for m in re.finditer(
+            rf"{re.escape(project)}-([\d.]+)\.tar", html
+        )
+        if not is_prerelease(m.group(1))
+    ]
+    return max(versions, key=version_tuple) if versions else None
+
+
 def check_sourceforge(project, path):
     # Use the SourceForge RSS feed for a given file path to extract versions.
     rss = fetch(f"https://sourceforge.net/projects/{project}/rss?path=/{path}")
@@ -348,6 +379,21 @@ def check_sourceforge(project, path):
         if not is_prerelease(m.group(1))
     ]
     return max(versions, key=version_tuple) if versions else None
+
+
+def check_pcre2():
+    # PCRE2 release tags are named "pcre2-10.44"; strip the prefix.
+    data = fetch_json("https://api.github.com/repos/PCRE2Project/pcre2/releases")
+    if not data:
+        return None
+    for rel in data:
+        if rel.get("draft") or rel.get("prerelease"):
+            continue
+        tag = rel.get("tag_name", "")
+        m = re.match(r"pcre2-([\d.]+)$", tag)
+        if m and not is_prerelease(m.group(1)):
+            return m.group(1)
+    return None
 
 
 def check_launchpad(project):
@@ -454,12 +500,8 @@ def check_udev():
 import urllib.parse  # noqa: E402 (imported here to keep grouping logical)
 
 CHECKERS = {
-    "Acl":            lambda: check_kernel_org(
-                          "linux/libs/security/linux-privs/libacl1/",
-                          r"acl-([\d.]+)\.tar"),
-    "Attr":           lambda: check_kernel_org(
-                          "linux/libs/security/linux-privs/libattr1/",
-                          r"attr-([\d.]+)\.tar"),
+    "Acl":            lambda: check_savannah("acl"),
+    "Attr":           lambda: check_savannah("attr"),
     "Autoconf":       lambda: check_gnu("autoconf"),
     "Automake":       lambda: check_gnu("automake"),
     "Bash":           lambda: check_gnu("bash"),
@@ -507,14 +549,14 @@ CHECKERS = {
                           "linux/libs/security/linux-privs/libcap2/",
                           r"libcap-([\d.]+)\.tar"),
     "Libffi":         lambda: check_github_release("libffi", "libffi"),
-    "Libpipeline":    lambda: check_gnu("libpipeline"),
+    "Libpipeline":    lambda: check_savannah("libpipeline"),
     "Libtool":        lambda: check_gnu("libtool"),
     "Libxcrypt":      lambda: check_github_release("besser82", "libxcrypt"),
     "Linux kernel":   lambda: check_linux_kernel(),
     "LZ4":            lambda: check_github_release("lz4", "lz4"),
     "M4":             lambda: check_gnu("m4"),
     "Make":           lambda: check_gnu("make"),
-    "Man-DB":         lambda: check_gnu("man-db"),
+    "Man-DB":         lambda: check_savannah("man-db"),
     "Man-Pages":      lambda: check_kernel_org(
                           "linux/docs/man-pages/",
                           r"man-pages-([\d.]+)\.tar"),
@@ -527,7 +569,7 @@ CHECKERS = {
     "OpenSSL":        lambda: check_openssl(),
     "packaging":      lambda: check_pypi("packaging"),
     "Patch":          lambda: check_gnu("patch"),
-    "PCRE2":          lambda: check_github_release("PCRE2Project", "pcre2"),
+    "PCRE2":          lambda: check_pcre2(),
     "Perl":           lambda: check_perl(),
     "Pkgconf":        lambda: check_github_release("pkgconf", "pkgconf"),
     "Procps-ng":      lambda: check_gitlab_release("procps-ng", "procps"),
