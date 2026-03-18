@@ -77,7 +77,7 @@ python3 --version 2>&1 | awk '{
 }'
 
 # xz
-xz --version | head -1 | awk '{print "OK: xz "$3}'
+xz --version | head -1 | awk '{print "OK: xz "$4}'
 
 # qemu (optional)
 for q in qemu-system-x86_64 qemu-system-aarch64 qemu-system-riscv64 \
