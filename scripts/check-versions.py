@@ -292,12 +292,17 @@ def check_python():
         "https://www.python.org/api/v2/downloads/release/"
         "?is_published=true&pre_release=false&limit=20"
     )
-    if data and data.get("results"):
-        versions = [
-            r["version"]
-            for r in data["results"]
-            if r.get("version") and not is_prerelease(r["version"])
-        ]
+    if isinstance(data, dict):
+        data = data.get("results", [])
+    if data:
+        versions = []
+        for r in data:
+            # 'version' is a numeric release ID; the version string is in 'name'
+            # e.g. {"name": "Python 3.12.5", "version": 100, ...}
+            name = r.get("name", "") if isinstance(r, dict) else ""
+            m = re.search(r"(\d+\.\d+\.\d+)", name)
+            if m and not is_prerelease(m.group(1)):
+                versions.append(m.group(1))
         if versions:
             return max(versions, key=version_tuple)
     return check_github_release("python", "cpython")
@@ -318,12 +323,43 @@ def check_sqlite():
 
 
 def check_tcl():
-    html = fetch("https://www.tcl.tk/software/tcltk/")
-    if html:
-        m = re.search(r"Tcl/Tk\s+([\d.]+)", html)
-        if m:
-            return m.group(1)
-    return check_github_release("tcltk", "tcl")
+    # LFS tracks the 8.6 branch; ignore 9.x releases.
+    # SourceForge RSS lists all releases; filter to 8.6.x explicitly.
+    rss = fetch("https://sourceforge.net/projects/tcl/rss?path=/Tcl")
+    if rss:
+        versions = [
+            m.group(1)
+            for m in re.finditer(r"/Tcl/(8\.6\.\d+)/", rss)
+            if not is_prerelease(m.group(1))
+        ]
+        if versions:
+            return max(versions, key=version_tuple)
+    return None
+
+
+def check_sourceforge(project, path):
+    # Use the SourceForge RSS feed for a given file path to extract versions.
+    rss = fetch(f"https://sourceforge.net/projects/{project}/rss?path=/{path}")
+    if not rss:
+        return None
+    versions = [
+        m.group(1)
+        for m in re.finditer(rf"{re.escape(path)}/([\d.]+)/", rss)
+        if not is_prerelease(m.group(1))
+    ]
+    return max(versions, key=version_tuple) if versions else None
+
+
+def check_launchpad(project):
+    data = fetch_json(f"https://api.launchpad.net/1.0/{project}/releases")
+    if not data:
+        return None
+    versions = [
+        e["version"]
+        for e in data.get("entries", [])
+        if e.get("version") and not is_prerelease(e["version"])
+    ]
+    return max(versions, key=version_tuple) if versions else None
 
 
 def check_less():
@@ -336,12 +372,17 @@ def check_less():
 
 
 def check_zlib():
-    html = fetch("https://zlib.net/")
-    if html:
-        m = re.search(r"zlib\s+([\d.]+)\s+is\s+the\s+current\s+release", html)
-        if m:
-            return m.group(1)
-    return None
+    # zlib.net removes old download links when a new version ships;
+    # the fossils directory lists all historical tarballs and is stable.
+    html = fetch("https://zlib.net/fossils/")
+    if not html:
+        return None
+    versions = [
+        m.group(1)
+        for m in re.finditer(r"zlib-([\d.]+)\.tar", html)
+        if not is_prerelease(m.group(1))
+    ]
+    return max(versions, key=version_tuple) if versions else None
 
 
 def check_bzip2():
@@ -432,8 +473,7 @@ CHECKERS = {
     "E2fsprogs":      lambda: check_github_release("tytso", "e2fsprogs"),
     "Elfutils":       lambda: check_elfutils(),
     "Expat":          lambda: check_expat(),
-    "Expect":         lambda: check_github_tag("tcltk", "expect",
-                                               r"(\d+\.\d+\.\d+)"),
+    "Expect":         lambda: check_sourceforge("expect", "Expect"),
     "File":           lambda: check_github_release("file", "file"),
     "Findutils":      lambda: check_gnu("findutils"),
     "Flex":           lambda: check_github_release("westes", "flex"),
@@ -451,8 +491,7 @@ CHECKERS = {
     "Gzip":           lambda: check_gnu("gzip"),
     "Iana-Etc":       lambda: check_iana_etc(),
     "Inetutils":      lambda: check_gnu("inetutils"),
-    "Intltool":       lambda: check_github_release("utopia-repository",
-                                                   "intltool"),
+    "Intltool":       lambda: check_launchpad("intltool"),
     "IPRoute2":       lambda: check_kernel_org(
                           "linux/utils/net/iproute2/",
                           r"iproute2-([\d.]+)\.tar"),
@@ -564,6 +603,9 @@ def check_one(pkg, current):
     except Exception as exc:
         return pkg, current, None, f"error: {exc}"
     if latest is None:
+        return pkg, current, None, STATUS_UNKNOWN
+    latest = str(latest).strip()
+    if not latest:
         return pkg, current, None, STATUS_UNKNOWN
     status = STATUS_OUTDATED if newer(latest, current) else STATUS_CURRENT
     return pkg, current, latest, status
