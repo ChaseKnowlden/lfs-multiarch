@@ -3,6 +3,7 @@
 A community-driven Linux From Scratch book targeting 14 architectures:
 **alpha, amd64, arm, arm64, hppa, loong, m68k, mips, ppc, ppc64, riscv, s390, sparc, x86**
 
+
 ---
 
 ## Milestone 0 — Project Bootstrap *(current)*
