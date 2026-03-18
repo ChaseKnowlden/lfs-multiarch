@@ -26,6 +26,9 @@ node_modules/
 # Secrets
 .env
 
+# Version checker cache
+.version-cache.json
+
 # Temporary build files
 *.tmp
 *.bak

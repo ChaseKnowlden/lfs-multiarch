@@ -33,9 +33,33 @@ PACKAGES_FILE = (
     Path(__file__).resolve().parent.parent
     / "book" / "part1-preparations" / "ch03-packages.md"
 )
+CACHE_FILE = Path(__file__).resolve().parent.parent / ".version-cache.json"
 TIMEOUT = 15
 MAX_WORKERS = 8
 UA = "lfs-multiarch-version-check/1.0 (+https://github.com/ChaseKnowlden/lfs-multiarch)"
+
+# Packages checked at most once per week to avoid constant churn.
+WEEKLY_PACKAGES = {"Iana-Etc", "Vim"}
+WEEK_SECONDS = 7 * 24 * 3600
+
+
+def _load_cache():
+    if CACHE_FILE.exists():
+        try:
+            return json.loads(CACHE_FILE.read_text())
+        except Exception:
+            pass
+    return {}
+
+
+def _save_cache(cache):
+    try:
+        CACHE_FILE.write_text(json.dumps(cache, indent=2))
+    except Exception:
+        pass
+
+
+_cache = _load_cache()
 
 # ---------------------------------------------------------------------------
 # .env loader — stdlib only, no python-dotenv required
@@ -239,6 +263,30 @@ def check_kernel_org(subpath, name_pat):
     return max(versions, key=version_tuple) if versions else None
 
 
+def check_util_linux():
+    base = "https://www.kernel.org/pub/linux/utils/util-linux/"
+    html = fetch(base)
+    if not html:
+        return None
+    dirs = sorted(
+        [m.group(1) for m in re.finditer(r'href="v([\d.]+)/"', html)],
+        key=version_tuple,
+        reverse=True,
+    )
+    for d in dirs:
+        sub = fetch(f"{base}v{d}/")
+        if not sub:
+            continue
+        versions = [
+            m.group(1)
+            for m in re.finditer(r"util-linux-([\d.]+)\.tar", sub)
+            if not is_prerelease(m.group(1))
+        ]
+        if versions:
+            return max(versions, key=version_tuple)
+    return None
+
+
 def check_linux_kernel():
     data = fetch_json("https://www.kernel.org/releases.json")
     if not data:
@@ -368,14 +416,16 @@ def check_savannah(project):
     return max(versions, key=version_tuple) if versions else None
 
 
-def check_sourceforge(project, path):
+def check_sourceforge(project, path, pat=None):
     # Use the SourceForge RSS feed for a given file path to extract versions.
     rss = fetch(f"https://sourceforge.net/projects/{project}/rss?path=/{path}")
     if not rss:
         return None
+    if pat is None:
+        pat = rf"{re.escape(path)}/([\d.]+)/"
     versions = [
         m.group(1)
-        for m in re.finditer(rf"{re.escape(path)}/([\d.]+)/", rss)
+        for m in re.finditer(pat, rss)
         if not is_prerelease(m.group(1))
     ]
     return max(versions, key=version_tuple) if versions else None
@@ -409,12 +459,12 @@ def check_launchpad(project):
 
 
 def check_less():
-    html = fetch("https://www.greenwoodsoftware.com/less/")
+    html = fetch("https://www.greenwoodsoftware.com/less/download.html")
     if html:
         m = re.search(r"less-(\d+)\.tar", html)
         if m:
             return m.group(1)
-    return None
+    return check_github_release("gwsw", "less")
 
 
 def check_zlib():
@@ -512,11 +562,14 @@ CHECKERS = {
     "Coreutils":      lambda: check_gnu("coreutils"),
     "DejaGNU":        lambda: check_gnu("dejagnu"),
     "Diffutils":      lambda: check_gnu("diffutils"),
-    "E2fsprogs":      lambda: check_github_release("tytso", "e2fsprogs"),
+    "E2fsprogs":      lambda: check_sourceforge("e2fsprogs", "e2fsprogs",
+                          rf"e2fsprogs/v?([\d.]+)/"),
     "Elfutils":       lambda: check_elfutils(),
     "Expat":          lambda: check_expat(),
     "Expect":         lambda: check_sourceforge("expect", "Expect"),
-    "File":           lambda: check_github_release("file", "file"),
+    "File":           lambda: max(
+                          _ftp_dir_versions("https://astron.com/pub/file/", r"file-([\d.]+)\.tar"),
+                          key=version_tuple, default=None),
     "Findutils":      lambda: check_gnu("findutils"),
     "Flex":           lambda: check_github_release("westes", "flex"),
     "Flit-core":      lambda: check_pypi("flit_core"),
@@ -571,7 +624,11 @@ CHECKERS = {
     "Patch":          lambda: check_gnu("patch"),
     "PCRE2":          lambda: check_pcre2(),
     "Perl":           lambda: check_perl(),
-    "Pkgconf":        lambda: check_github_release("pkgconf", "pkgconf"),
+    "Pkgconf":        lambda: max(
+                          _ftp_dir_versions(
+                              "https://distfiles.ariadne.space/pkgconf/",
+                              r"pkgconf-([\d.]+)\.tar"),
+                          key=version_tuple, default=None),
     "Procps-ng":      lambda: check_gitlab_release("procps-ng", "procps"),
     "Psmisc":         lambda: check_gitlab_release("psmisc", "psmisc"),
     "Python":         lambda: check_python(),
@@ -586,9 +643,7 @@ CHECKERS = {
     "Tcl":            lambda: check_tcl(),
     "Texinfo":        lambda: check_gnu("texinfo"),
     "Udev (systemd)": lambda: check_udev(),
-    "Util-linux":     lambda: check_kernel_org(
-                          "linux/utils/util-linux/",
-                          r"util-linux-([\d.]+)\.tar"),
+    "Util-linux":     lambda: check_util_linux(),
     "Vim":            lambda: check_vim(),
     "Wheel":          lambda: check_pypi("wheel"),
     "XML::Parser":    lambda: check_xml_parser(),
@@ -640,6 +695,15 @@ def check_one(pkg, current):
     checker = CHECKERS.get(pkg)
     if checker is None:
         return pkg, current, None, STATUS_UNKNOWN
+
+    if pkg in WEEKLY_PACKAGES:
+        entry = _cache.get(pkg, {})
+        if time.time() - entry.get("ts", 0) < WEEK_SECONDS:
+            latest = entry.get("version")
+            if latest:
+                status = STATUS_OUTDATED if newer(latest, current) else STATUS_CURRENT
+                return pkg, current, latest, status
+
     try:
         latest = checker()
     except Exception as exc:
@@ -649,6 +713,11 @@ def check_one(pkg, current):
     latest = str(latest).strip()
     if not latest:
         return pkg, current, None, STATUS_UNKNOWN
+
+    if pkg in WEEKLY_PACKAGES:
+        _cache[pkg] = {"version": latest, "ts": time.time()}
+        _save_cache(_cache)
+
     status = STATUS_OUTDATED if newer(latest, current) else STATUS_CURRENT
     return pkg, current, latest, status
 
