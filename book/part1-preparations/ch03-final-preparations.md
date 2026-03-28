@@ -1,6 +1,6 @@
-# Chapter 4 — Final Preparations
+# Chapter 3 — Final Preparations
 
-## 4.1 Setting the Target Architecture
+## 3.1 Setting the Target Architecture
 
 Choose your target architecture and set the following variables in your shell
 (add them to `~/.bashrc` for persistence across sessions):
@@ -30,7 +30,7 @@ The config script sets:
 | `CC`             | `gcc`                           | Host C compiler                   |
 | `CXX`            | `g++`                           | Host C++ compiler                 |
 
-## 4.2 Creating the LFS User
+## 3.2 Creating the LFS User
 
 ```bash
 groupadd lfs
@@ -43,7 +43,7 @@ esac
 su - lfs
 ```
 
-## 4.3 Setting Up the Build Environment
+## 3.3 Setting Up the Build Environment
 
 As user `lfs`, create `~/.bash_profile`:
 

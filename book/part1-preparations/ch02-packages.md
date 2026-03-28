@@ -1,9 +1,9 @@
-# Chapter 3 — Packages and Patches
+# Chapter 2 — Packages and Patches
 
 All packages listed here are required for a complete LFS build.
 Arch-specific patches are stored in `patches/<arch>/`.
 
-## 3.1 Core Packages
+## 2.1 Core Packages
 
 | Package           | Version  | Size (approx) | URL / Notes                     |
 |-------------------|----------|---------------|---------------------------------|
@@ -91,7 +91,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Zlib              | 1.3.2    | 1.1 MB        |                                 |
 | Zstd              | 1.5.7    | 2.3 MB        |                                 |
 
-## 3.2 Architecture-Specific Packages
+## 2.2 Architecture-Specific Packages
 
 | Package     | Arch(es)             | Purpose                                  |
 |-------------|----------------------|------------------------------------------|
@@ -104,7 +104,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | dtc         | arm, arm64, riscv    | Device Tree compiler                     |
 | u-boot      | arm, arm64, riscv    | Embedded bootloader (optional)           |
 
-## 3.3 Optional / Test Packages
+## 2.3 Optional / Test Packages
 
 | Package     | Purpose                                      |
 |-------------|----------------------------------------------|
@@ -112,7 +112,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Expect      | GCC test suite dependency                    |
 | Tcl         | GCC test suite dependency                    |
 
-## 3.4 Patches
+## 2.4 Patches
 
 Architecture-specific patches live in `patches/<arch>/`.
 See `patches/README.md` for the naming convention and update policy.

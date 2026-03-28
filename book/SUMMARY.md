@@ -8,9 +8,8 @@
 # Part I — Preparations
 
 - [Host System Requirements](part1-preparations/ch01-host-requirements.md)
-- [Preparing the Build Partition](part1-preparations/ch02-partition.md)
-- [Packages and Patches](part1-preparations/ch03-packages.md)
-- [Final Preparations](part1-preparations/ch04-final-preparations.md)
+- [Packages and Patches](part1-preparations/ch02-packages.md)
+- [Final Preparations](part1-preparations/ch03-final-preparations.md)
 
 ---
 
