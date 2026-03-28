@@ -9,7 +9,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 |-------------------|----------|---------------|---------------------------------|
 | Acl               | 2.3.2    | 356 KB        |                                 |
 | Attr              | 2.5.2    | 352 KB        |                                 |
-| Autoconf          | 2.72     | 1.3 MB        |                                 |
+| Autoconf          | 2.73     | 1.3 MB        |                                 |
 | Automake          | 1.18.1   | 1.5 MB        |                                 |
 | Bash              | 5.3      | 10.7 MB       |                                 |
 | Bc                | 7.0.3    | 441 KB        |                                 |
@@ -38,7 +38,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Groff             | 1.24.1   | 7.7 MB        |                                 |
 | GRUB              | 2.14     | 6.4 MB        | amd64/arm64/x86/loong/riscv/ppc64|
 | Gzip              | 1.14     | 820 KB        |                                 |
-| Iana-Etc          | 20260310 | 576 KB        |                                 |
+| Iana-Etc          | 20260318 | 576 KB        |                                 |
 | Inetutils         | 2.7      | 1.5 MB        |                                 |
 | Intltool          | 0.51.0   | 192 KB        |                                 |
 | IPRoute2          | 6.19.0   | 895 KB        |                                 |
@@ -51,7 +51,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Libpipeline       | 1.5.8    | 956 KB        |                                 |
 | Libtool           | 2.5.4    | 996 KB        |                                 |
 | Libxcrypt         | 4.5.2    | 540 KB        |                                 |
-| Linux kernel      | 6.19.8   | 136 MB        |                                 |
+| Linux kernel      | 6.19.10   | 136 MB        |                                 |
 | LZ4               | 1.10.0   | 1.4 MB        |                                 |
 | M4                | 1.4.21   | 1.6 MB        |                                 |
 | Make              | 4.4.1    | 2.3 MB        |                                 |
@@ -59,7 +59,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Man-Pages         | 6.17     | 1.8 MB        |                                 |
 | MarkupSafe        | 3.0.3    | 20 KB         | Python (for Meson)              |
 | Meson             | 1.10.2   | 2.2 MB        |                                 |
-| MPC               | 1.3.1    | 756 KB        |                                 |
+| MPC               | 1.4.0    | 756 KB        |                                 |
 | MPFR              | 4.2.2    | 1.5 MB        |                                 |
 | Ncurses           | 6.6      | 3.6 MB        |                                 |
 | Ninja             | 1.13.2   | 228 KB        |                                 |
@@ -67,7 +67,7 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | packaging         | 26.0     | 148 KB        | Python                          |
 | Patch             | 2.8      | 766 KB        |                                 |
 | PCRE2             | 10.47    | 1.9 MB        |                                 |
-| Perl              | 5.42.1   | 13.2 MB       |                                 |
+| Perl              | 5.42.2   | 13.2 MB       |                                 |
 | Pkgconf           | 2.5.1    | 492 KB        |                                 |
 | Procps-ng         | 4.0.6    | 1.4 MB        |                                 |
 | Psmisc            | 23.7     | 356 KB        |                                 |
@@ -82,11 +82,11 @@ Arch-specific patches are stored in `patches/<arch>/`.
 | Tar               | 1.35     | 2.6 MB        |                                 |
 | Tcl               | 8.6.17   | 11.1 MB       |                                 |
 | Texinfo           | 7.3      | 5.0 MB        |                                 |
-| Udev (systemd)    | 260      | 16.2 MB       | udev rules only                 |
+| Udev (systemd)    | 260.1      | 16.2 MB       | udev rules only                 |
 | Util-linux        | 2.41.3   | 8.3 MB        |                                 |
-| Vim               | 9.2.0192 | 17.6 MB       |                                 |
+| Vim               | 9.2.0265 | 17.6 MB       |                                 |
 | Wheel             | 0.46.3   | 96 KB         | Python                          |
-| XML::Parser       | 2.47     | 272 KB        | Perl                            |
+| XML::Parser       | 2.54     | 272 KB        | Perl                            |
 | Xz                | 5.8.2    | 1.5 MB        |                                 |
 | Zlib              | 1.3.2    | 1.1 MB        |                                 |
 | Zstd              | 1.5.7    | 2.3 MB        |                                 |
