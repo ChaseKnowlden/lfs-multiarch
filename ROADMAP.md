@@ -57,15 +57,14 @@ substitution variables where arch-specific values differ.
 - [ ] **Prologue** — Introduction, prerequisites, how to read this book
 - [ ] **Part I — Preparations**
   - [ ] Ch 1: Introduction & host system requirements
-  - [ ] Ch 2: Preparing the build partition
-  - [ ] Ch 3: Packages and patches list (arch-annotated)
-  - [ ] Ch 4: Final preparations (env vars, `$LFS`, `$LFS_TGT`, etc.)
+  - [ ] Ch 2: Packages and patches list (arch-annotated)
+  - [ ] Ch 3: Final preparations (env vars, `$LFS`, `$LFS_TGT`, etc.)
 - [ ] **Part II — Cross-Compilation Toolchain**
-  - [ ] Ch 5: Binutils pass 1
-  - [ ] Ch 6: GCC pass 1
-  - [ ] Ch 7: Linux API headers
-  - [ ] Ch 8: Glibc
-  - [ ] Ch 9: Libstdc++ (pass 1)
+  - [ ] Ch 4: Binutils pass 1
+  - [ ] Ch 5: GCC pass 1
+  - [ ] Ch 6: Linux API headers
+  - [ ] Ch 7: Glibc
+  - [ ] Ch 8: Libstdc++ (pass 1)
 - [ ] **Part III — Cross-Compiling Temporary Tools**
   - [ ] M4, Ncurses, Bash, Coreutils, Diffutils, File, Findutils,
           Gawk, Grep, Gzip, Make, Patch, Sed, Tar, Xz, Binutils pass 2,
