@@ -31,7 +31,12 @@ Run `scripts/version-check.sh` to verify.
 
 For **cross-compilation** to a non-host architecture you also need:
 - A cross-binutils and cross-gcc for `$LFS_TGT` (the book builds these in Part II)
-- QEMU (optional, for testing — `qemu-system-<arch>` or `qemu-<arch>-static`)
+- `qemu-<arch>-static` — statically-linked QEMU user-mode binary for your target
+  architecture.  This is **required** (not optional): it allows the host kernel to
+  transparently execute foreign-architecture binaries inside the chroot via
+  `binfmt_misc`, eliminating the need for a full system emulator.
+- `binfmt_misc` support in the host kernel (built-in or as a module) with the
+  appropriate handler registered for your target architecture.
 
 ## 1.2 Disk Space
 
