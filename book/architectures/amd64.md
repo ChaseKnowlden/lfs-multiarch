@@ -41,7 +41,7 @@ better performance.
 
 ## Boot Chain
 
-```
+```text
 Firmware (BIOS or UEFI)
   └─ GRUB 2
        └─ Linux kernel
@@ -66,6 +66,80 @@ database with `mokutil`; this is not covered in the main book.
   from accidentally picking up host headers.
 - Common test platforms: bare metal x86-64 desktop/server, QEMU/KVM
   (`-machine q35` or `-machine pc`), and cloud VMs (AWS x86_64, GCP, Azure).
+
+## Cross-Compilation Toolchain
+
+### Binutils Pass 1
+
+No architecture-specific flags are required beyond the standard options.
+Because the host is usually also `x86_64`, the `$LFS_TGT` triplet
+(`x86_64-lfs-linux-gnu`) deliberately differs from the typical host triplet
+(`x86_64-pc-linux-gnu`) to force cross-compilation mode and prevent accidental
+use of host headers.  The `--with-sysroot=$LFS` flag enforces this boundary.
+
+### `lib64` → `lib` Symlink
+
+x86-64 Glibc and GCC expect a `lib64` directory for 64-bit shared libraries.
+This book collapses that into `lib` to keep the sysroot layout simple.  Create
+the symlinks before GCC pass 1:
+
+```bash
+mkdir -pv $LFS/usr/lib
+ln -sfv lib $LFS/usr/lib64
+ln -sfv lib $LFS/lib64
+```
+
+Without these symlinks, GCC and Glibc will install into separate `lib` and
+`lib64` trees, causing dynamic linker lookup failures at the sanity-check step.
+
+### GCC Pass 1
+
+The key flags for amd64:
+
+| Flag | Purpose |
+|------|---------|
+| `--with-arch=x86-64` | Targets x86-64 v1 baseline (SSE2 minimum); set via `$LFS_GCC_EXTRA` |
+| `--disable-multilib` | Suppresses 32-bit (`-m32`) library generation; not needed here |
+| `--with-newlib` / `--without-headers` | No C library yet; inhibits TLS and features requiring glibc |
+
+The `sed -e '/m64=/s/lib64/lib/' gcc/config/i386/t-linux64` step (from LFS
+upstream) applies only when the host is x86-64 and the *target* is also
+x86-64.  Since both are true here, run this sed before configuring GCC pass 1.
+
+### Glibc
+
+Pass `libc_cv_slibdir=/usr/lib` to ensure the shared library directory is
+`/usr/lib` rather than `/usr/lib64`, consistent with the symlink created above.
+
+```bash
+libc_cv_slibdir=/usr/lib
+```
+
+The dynamic linker path for amd64 is:
+
+```text
+/lib64/ld-linux-x86-64.so.2
+```
+
+This resolves through the `lib64 → lib` symlink to
+`/lib/ld-linux-x86-64.so.2` on disk.
+
+### Sanity Check
+
+After building Glibc, verify the dynamic linker path is correct:
+
+```bash
+echo 'int main(){}' | $LFS_TGT-gcc -xc -
+readelf -l a.out | grep interpreter
+```
+
+Expected output:
+```text
+[Requesting program interpreter: /lib64/ld-linux-x86-64.so.2]
+```
+
+If the path shows `/lib/ld-linux-x86-64.so.2` (without `lib64`), the symlink
+is missing or incorrect.
 
 ## Bootloader
 

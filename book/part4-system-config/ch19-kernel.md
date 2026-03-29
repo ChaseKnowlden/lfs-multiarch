@@ -15,7 +15,7 @@ make ARCH=$LFS_ARCH_LINUX menuconfig    # customise
 
 Ensure these are set (=y or =m as appropriate):
 
-```
+```text
 CONFIG_DEVTMPFS=y
 CONFIG_DEVTMPFS_MOUNT=y
 CONFIG_SYSFS=y

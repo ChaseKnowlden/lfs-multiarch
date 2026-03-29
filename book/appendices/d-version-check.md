@@ -11,7 +11,7 @@ bash scripts/version-check.sh
 
 ## Sample Output (passing host)
 
-```
+```text
 OK:      bash 5.2.37
 OK:      /bin/sh -> bash
 OK:      binutils 2.43.1

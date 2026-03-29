@@ -54,7 +54,7 @@ spell:
 linkcheck:
 	@echo "==> Link check"
 	find $(BOOK_SRC) -name '*.md' | \
-	    xargs markdown-link-check --config .mlc.json --quiet
+	    xargs npx markdown-link-check --config .mlc.json --quiet
 
 # ---------------------------------------------------------------------------
 # Alternative output formats (require Pandoc)

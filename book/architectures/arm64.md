@@ -79,6 +79,67 @@ chapters normally.
 - Common test platforms: QEMU (`-M virt -cpu cortex-a57`), AWS Graviton,
   Raspberry Pi 4/5, Ampere Mt. Collins.
 
+## Cross-Compilation Toolchain
+
+### Binutils Pass 1
+
+No architecture-specific flags are required.  The `aarch64-lfs-linux-gnu`
+triplet is unambiguous; all aarch64 Linux targets use the same ELF64 LE
+object format and the GNU assembler handles all standard Armv8 encodings
+without extra flags.
+
+### GCC Pass 1
+
+The key flags for arm64:
+
+| Flag | Purpose |
+|------|---------|
+| `--with-arch=armv8-a` | Targets the Armv8.0-A baseline; set via `$LFS_GCC_EXTRA` |
+| `--disable-multilib` | aarch64 has no 32-bit multilib in this book; ILP32 is not built |
+| `--with-newlib` / `--without-headers` | No C library yet at this stage |
+
+There are no pre-configure sed steps required for arm64.  The standard
+GCC pass 1 configure line from Chapter 6, with `$LFS_GCC_EXTRA` expanding
+to `--with-arch=armv8-a`, is sufficient.
+
+### Page Size Considerations
+
+Glibc is built assuming the host and target share the same kernel page size.
+The standard arm64 page size is 4 KiB.  If the target system uses a non-default
+page size (16 KiB on Apple Silicon or Ampere Altra, 64 KiB on some HPC kernels),
+the Glibc built here will not load correctly on that kernel.  For maximum
+compatibility, build with the default 4 KiB page size and use a matching kernel
+configuration (`CONFIG_ARM64_PAGE_SHIFT=12`).
+
+### Glibc
+
+No architecture-specific configure flags are needed for arm64 with the LP64
+ABI.  The `--host=$LFS_TGT` triplet (`aarch64-lfs-linux-gnu`) is sufficient to
+select the correct ABI.
+
+The dynamic linker path for arm64 is:
+
+```text
+/lib/ld-linux-aarch64.so.1
+```
+
+No `lib64` symlink is needed; arm64 Glibc installs into `/lib` and `/usr/lib`
+directly (unlike amd64, which uses `lib64`).
+
+### Sanity Check
+
+After building Glibc, verify the dynamic linker path:
+
+```bash
+echo 'int main(){}' | $LFS_TGT-gcc -xc -
+readelf -l a.out | grep interpreter
+```
+
+Expected output:
+```text
+[Requesting program interpreter: /lib/ld-linux-aarch64.so.1]
+```
+
 ## Bootloader
 
 See [Bootloader Configuration — arm64](../part4-system-config/bootloaders.md#arm64--grub-efi).

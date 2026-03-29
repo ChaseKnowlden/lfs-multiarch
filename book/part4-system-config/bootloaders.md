@@ -37,7 +37,7 @@ grub-install --target=arm64-efi --efi-directory=/boot/efi --bootloader-id=LFS
 ## arm — U-Boot (typical embedded board)
 
 Create `/boot/boot.cmd`:
-```
+```text
 setenv bootargs "root=/dev/mmcblk0p2 rw console=ttyS0,115200"
 load mmc 0:1 ${kernel_addr_r}  /boot/zImage
 load mmc 0:1 ${fdt_addr_r}     /boot/dtb/${fdtfile}
@@ -64,7 +64,7 @@ EOF
 palo -f /etc/palo.conf
 ```
 `/etc/palo.conf`:
-```
+```text
 --format=new
 --kernel=vmlinux
 --ramdisk=
@@ -92,7 +92,7 @@ grub-install --target=loongarch64-efi --efi-directory=/boot/efi
 ## mips — U-Boot / YAMON
 
 U-Boot (most common):
-```
+```text
 setenv bootargs "root=/dev/sda1 rw console=ttyS0,115200"
 bootm ${kernel_addr}
 ```
@@ -102,7 +102,7 @@ bootm ${kernel_addr}
 ## ppc (32-bit) — Yaboot (OpenFirmware)
 
 `/etc/yaboot.conf`:
-```
+```text
 boot=/dev/sdX2
 device=hd:
 partition=2
@@ -157,7 +157,7 @@ zipl
 ## sparc — SILO
 
 `/etc/silo.conf`:
-```
+```text
 partition=1
 root=/dev/sda1
 read-write

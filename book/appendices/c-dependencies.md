@@ -6,7 +6,7 @@
 
 ## Dependency Graph (summary)
 
-```
+```text
 GCC ──────────────── needs ──► GMP, MPFR, MPC
 Glibc ────────────── needs ──► Linux API headers
 Binutils pass 2 ──── needs ──► Glibc headers (via sysroot)

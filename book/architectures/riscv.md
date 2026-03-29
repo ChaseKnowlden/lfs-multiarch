@@ -33,7 +33,7 @@ For embedded targets without FP, use `rv64imac` + `lp64` and adjust
 
 ## Boot Chain
 
-```
+```text
 OpenSBI (M-mode)
   └─ U-Boot (S-mode, EFI payload) or directly to kernel
        └─ GRUB EFI (optional)
