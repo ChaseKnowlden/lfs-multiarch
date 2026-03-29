@@ -97,7 +97,7 @@ currency:
 	$(PYTHON) scripts/check-versions.py
 
 currency-update:
-	@echo "==> Checking upstream package versions and updating ch03-packages.md"
+	@echo "==> Checking upstream package versions and updating ch02-packages.md"
 	$(PYTHON) scripts/check-versions.py --update
 
 # ---------------------------------------------------------------------------

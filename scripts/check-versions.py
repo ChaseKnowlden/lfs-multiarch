@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""check-versions.py — compare package versions in ch03-packages.md against upstream.
+"""check-versions.py — compare package versions in ch02-packages.md against upstream.
 
 Usage:
     python3 scripts/check-versions.py [options] [PACKAGE ...]
 
 Options:
-    -u, --update   Rewrite outdated versions in ch03-packages.md in-place.
+    -u, --update   Rewrite outdated versions in ch02-packages.md in-place.
     -j, --json     Output results as JSON instead of a table.
     -q, --quiet    Only print outdated packages.
     PACKAGE        Limit check to specific package name(s) (case-insensitive).
@@ -31,7 +31,7 @@ from pathlib import Path
 
 PACKAGES_FILE = (
     Path(__file__).resolve().parent.parent
-    / "book" / "part1-preparations" / "ch03-packages.md"
+    / "book" / "part1-preparations" / "ch02-packages.md"
 )
 CACHE_FILE = Path(__file__).resolve().parent.parent / ".version-cache.json"
 TIMEOUT = 15
@@ -653,7 +653,7 @@ CHECKERS = {
 }
 
 # ---------------------------------------------------------------------------
-# Parse / update ch03-packages.md
+# Parse / update ch02-packages.md
 # ---------------------------------------------------------------------------
 _ROW_RE = re.compile(
     r"^\|\s*(?P<pkg>[^|]+?)\s*\|\s*(?P<ver>\S+)\s*\|(?P<rest>.*)$"
@@ -671,7 +671,7 @@ def parse_book_versions():
 
 
 def update_book_version(pkg, new_ver):
-    """Rewrite the version cell for *pkg* in ch03-packages.md."""
+    """Rewrite the version cell for *pkg* in ch02-packages.md."""
     text = PACKAGES_FILE.read_text()
     # Match the table row for this exact package name
     pat = re.compile(
@@ -730,7 +730,7 @@ def main():
     ap.add_argument("packages", nargs="*", metavar="PACKAGE",
                     help="Package name(s) to check (default: all).")
     ap.add_argument("-u", "--update", action="store_true",
-                    help="Rewrite outdated versions in ch03-packages.md.")
+                    help="Rewrite outdated versions in ch02-packages.md.")
     ap.add_argument("-j", "--json", dest="json_out", action="store_true",
                     help="Output JSON instead of a table.")
     ap.add_argument("-q", "--quiet", action="store_true",
