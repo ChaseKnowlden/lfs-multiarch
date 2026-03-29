@@ -11,31 +11,33 @@ case $(uname -m) in
 esac
 ```
 
-## 14.2 Mounting Virtual Filesystems
+## 14.2 Copying the QEMU Binary
+
+Before entering the chroot, copy the QEMU user-mode binary into `$LFS` so
+that `binfmt_misc` can find it after the pivot.  The binary name is set by
+`arch-config.sh` and varies by distribution (e.g. `qemu-aarch64-static` on
+Debian/Ubuntu, `qemu-aarch64` on Gentoo):
 
 ```bash
-mkdir -pv $LFS/{dev,proc,sys,run}
-mount -v --bind /dev $LFS/dev
-mount -v --bind /dev/pts $LFS/dev/pts
-mount -vt proc proc $LFS/proc
-mount -vt sysfs sysfs $LFS/sys
-mount -vt tmpfs tmpfs $LFS/run
-if [ -h $LFS/dev/shm ]; then
-    install -v -d -m 1777 $LFS$(realpath /dev/shm)
-else
-    mount -vt tmpfs -o nosuid,nodev tmpfs $LFS/dev/shm
-fi
+mkdir -pv $LFS/usr/bin
+cp -v $(command -v $LFS_QEMU_STATIC) $LFS/usr/bin/
 ```
+
+> **Note:** This binary is only needed during the build.  It is not part of
+> the final LFS system and can be removed once the build is complete.
 
 ## 14.3 Entering the Chroot
 
+`arch-chroot` from `arch-install-scripts` mounts the virtual filesystems
+(`/dev`, `/proc`, `/sys`, `/run`) automatically and cleans them up on exit:
+
 ```bash
-chroot "$LFS" /usr/bin/env -i              \
-    HOME=/root TERM=$TERM                   \
-    PS1='(lfs chroot) \u:\w\$ '            \
-    PATH=/usr/bin:/usr/sbin                 \
-    MAKEFLAGS="-j$(nproc)"                  \
-    TESTSUITEFLAGS="-j$(nproc)"             \
+arch-chroot "$LFS" /usr/bin/env -i      \
+    HOME=/root TERM=$TERM               \
+    PS1='(lfs chroot) \u:\w\$ '        \
+    PATH=/usr/bin:/usr/sbin             \
+    MAKEFLAGS="-j$(nproc)"             \
+    TESTSUITEFLAGS="-j$(nproc)"        \
     /bin/bash --login
 ```
 

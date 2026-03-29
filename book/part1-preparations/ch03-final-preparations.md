@@ -64,36 +64,6 @@ echo ':qemu-aarch64:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x
 The `F` flag (fix-binary) keeps the interpreter path valid after the chroot
 pivot — it is required here.
 
-### 3.2.3 Copy the static binary into the chroot
-
-The QEMU binary must be present inside `$LFS` at the same absolute path
-registered with `binfmt_misc`.  The binary name varies by distribution:
-
-| Distribution          | Binary name example      |
-|-----------------------|--------------------------|
-| Debian, Ubuntu        | `qemu-aarch64-static`    |
-| Gentoo, Arch, others  | `qemu-aarch64`           |
-
-`arch-config.sh` detects which name is present on your host and sets
-`LFS_QEMU_STATIC` accordingly.  If neither is found it will warn you.
-
-```bash
-# Determine the binary name for your target (set by arch-config.sh)
-# e.g. LFS_QEMU_STATIC=qemu-aarch64-static
-mkdir -pv $LFS/usr/bin
-cp -v /usr/bin/$LFS_QEMU_STATIC $LFS/usr/bin/
-```
-
-Verify the registration works before entering the chroot:
-
-```bash
-file $LFS/usr/bin/$LFS_QEMU_STATIC
-# should report: statically linked
-```
-
-> **Note:** The binary only needs to remain in `$LFS/usr/bin` while building
-> inside the chroot.  It is not part of the final LFS system and can be removed
-> after the build is complete.
 
 ## 3.3 Creating the LFS User
 

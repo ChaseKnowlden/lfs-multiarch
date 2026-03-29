@@ -29,6 +29,11 @@ Run `scripts/version-check.sh` to verify.
 | Texinfo       | 5.0            |
 | Xz            | 5.0.0          |
 
+For **all builds** you also need:
+- `arch-chroot` (from `arch-install-scripts`) — handles virtual filesystem
+  mounts and chroot entry.  Available on most distros under the same package
+  name.
+
 For **cross-compilation** to a non-host architecture you also need:
 - A cross-binutils and cross-gcc for `$LFS_TGT` (the book builds these in Part II)
 - `qemu-<arch>-static` — statically-linked QEMU user-mode binary for your target
